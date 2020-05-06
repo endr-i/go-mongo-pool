@@ -1,4 +1,4 @@
-package endrmongopool
+package endrMongoPool
 
 import (
 	"context"
