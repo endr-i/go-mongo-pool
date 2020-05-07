@@ -14,9 +14,8 @@ import (
 type DBConfig struct {
 	Uri            string `default:"mongodb://localhost:27017"`
 	ConnectTimeout int    `default:"10"`
-	DBName         string `default:"wares_info"`
-	//GoodsCollection string `default:"goods_catalog"`
-	PoolSize int `default:"5"`
+	DBName         string `default:""`
+	PoolSize       int    `default:"5"`
 	// TODO: add credentials
 }
 
@@ -36,10 +35,6 @@ func NewMongoConnection(dbConfig DBConfig) *MongoConnection {
 		config:     &dbConfig,
 	}
 }
-
-//const mongoPoolSize = 2
-//var mongoPool = make(chan *mongo.Database, mongoPoolSize)
-//var mongoPoolLength int
 
 func (conn *MongoConnection) GetMongoDB() (*mongo.Database, error) {
 	defer func() {
@@ -95,6 +90,7 @@ func (conn *MongoConnection) NewMongoDB() (*mongo.Database, error) {
 	// Create client
 	mongoOptions := options.Client().ApplyURI(conn.config.Uri)
 	mongoOptions = mongoOptions.SetConnectTimeout(time.Second)
+	mongoOptions.SetMaxPoolSize(uint64(conn.config.ConnectTimeout))
 	client, err := mongo.NewClient(mongoOptions)
 	if err != nil {
 		return nil, err
@@ -109,7 +105,6 @@ func (conn *MongoConnection) NewMongoDB() (*mongo.Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	//defer client.Disconnect(context.TODO())
 	fmt.Println("Connected to MongoDB!")
 	return client.Database(conn.config.DBName), nil
 }
