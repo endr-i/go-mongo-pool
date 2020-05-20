@@ -1,3 +1,3 @@
 # go-mongo-pool
 
-test for buffered channels
+Mongo DB is concurrent safe so this is just test for buffered channels

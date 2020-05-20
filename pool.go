@@ -77,6 +77,7 @@ func (conn *MongoConnection) PutMongoDB(db *mongo.Database) error {
 }
 
 func (conn *MongoConnection) CloseMongoDB() (err error) {
+	close(conn.pool)
 	for db := range conn.pool {
 		err = db.Client().Disconnect(context.TODO())
 		if err != nil {
